@@ -12,7 +12,26 @@ from fmri.evaluate import (permutation_test, run_cv, run_paper_cv, summarize)
 
 
 def paper_protocol(bold, meta, seed):
-    """Balanced subset, 10-fold CV, the models compared in the original paper."""
+    """
+    Run the paper-based classification protocol.
+
+    The protocol balances the dataset and evaluates the models
+    using 10-fold cross-validation.
+
+    Parameters
+    ----------
+    bold : np.ndarray
+        Resting-state fMRI BOLD time-series data.
+    meta : pd.DataFrame
+        Subject metadata containing labels and demographic information.
+    seed : int
+        Random seed used for reproducible evaluation.
+
+    Returns
+    -------
+     pd.DataFrame
+        Classification performance metrics for each model.
+    """
     idx = balanced_subset(meta, seed)
     b, m = bold[idx], meta.iloc[idx].reset_index(drop=True)
     y = m["label"].to_numpy()
@@ -74,6 +93,13 @@ def full_protocol(bold, meta, seed, repeats):
 
 
 def main():
+    """ 
+    Run the fMRI alcohol classification experiments.
+
+    Parses command-line arguments, loads the dataset, runs the
+    classification protocols, performs the permutation test, and
+    writes tables and figures to the output directory.
+    """
     ap = argparse.ArgumentParser(description="Classify heavy drinkers from resting-state fMRI features")
     ap.add_argument("--data", help="folder with bold.npy and meta.csv (default: simulated data)")
     ap.add_argument("--out", default="results")
